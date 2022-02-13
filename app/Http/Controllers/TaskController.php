@@ -14,7 +14,9 @@ class TaskController extends Controller
      */
     public function index()
     {
-        return Task::where('project_id', request()->project_id)->get();
+        return Task::where('project_id', request()->project_id)
+            ->orderByDesc('updated_at')
+            ->paginate(100);
     }
 
     /**
