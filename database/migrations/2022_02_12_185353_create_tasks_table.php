@@ -21,7 +21,6 @@ return new class extends Migration
             $table->foreignId('project_id')->constrained()->onDelete('CASCADE');
             $table->timestamp('deadline')->nullable();
             $table->boolean('is_complete')->index()->default(false);
-            $table->json('tags')->nullable();
             $table->timestamps();
         });
     }

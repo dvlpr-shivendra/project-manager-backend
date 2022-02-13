@@ -16,7 +16,6 @@ class TaskFactory extends Factory
         return [
             'title' => $this->faker->sentence(5),
             'description' => $this->faker->paragraph(),
-            'tags' => json_encode([$this->faker->word(), $this->faker->word()])
         ];
     }
 }

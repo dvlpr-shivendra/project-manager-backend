@@ -71,4 +71,15 @@ class TaskController extends Controller
     {
         return $task->delete();
     }
+
+    public function addTag(Task $task)
+    {
+        request()->validate([
+            'tag_id' => ['required']
+        ]);
+
+        $task->tags()->attach(request()->tag_id);
+
+        return response($task->refresh(), 201);
+    }
 }

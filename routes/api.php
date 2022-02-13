@@ -26,3 +26,4 @@ Route::post('token', TokenController::class);
 Route::post('signup', SignupController::class);
 Route::resource('projects', ProjectController::class)->middleware(['auth:sanctum']);
 Route::resource('tasks', TaskController::class)->middleware(['auth:sanctum']);
+Route::post('tasks/{task}/tag', [TaskController::class, 'addTag'])->middleware(['auth:sanctum']);
