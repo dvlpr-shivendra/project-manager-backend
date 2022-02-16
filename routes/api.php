@@ -6,6 +6,7 @@ use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TokenController;
 use App\Http\Controllers\SignupController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\SelectController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,12 +19,17 @@ use App\Http\Controllers\ProjectController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::post('token', TokenController::class);
 Route::post('signup', SignupController::class);
-Route::resource('projects', ProjectController::class)->middleware(['auth:sanctum']);
-Route::resource('tasks', TaskController::class)->middleware(['auth:sanctum']);
-Route::post('tasks/{task}/tag', [TaskController::class, 'addTag'])->middleware(['auth:sanctum']);
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    // Project Routes
+    Route::resource('projects', ProjectController::class);
+
+    // Task Routes
+    Route::resource('tasks', TaskController::class);
+    Route::post('tasks/{task}/tag', [TaskController::class, 'addTag']);
+
+    // Uses Routes
+    Route::get('users', [SelectController::class, 'users']);
+});
