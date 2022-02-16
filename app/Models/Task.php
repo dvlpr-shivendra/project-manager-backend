@@ -13,8 +13,6 @@ class Task extends Model
 
     protected $with = ['user', 'tags'];
 
-    protected $hidden = ['user_id'];
-
     protected $casts = [
         'is_complete' => 'boolean',
     ];
