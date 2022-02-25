@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Tag;
 use App\Models\Task;
 use Illuminate\Http\Request;
 
@@ -70,16 +71,5 @@ class TaskController extends Controller
     public function destroy(Task $task)
     {
         return $task->delete();
-    }
-
-    public function addTag(Task $task)
-    {
-        request()->validate([
-            'tag_id' => ['required']
-        ]);
-
-        $task->tags()->attach(request()->tag_id);
-
-        return response($task->refresh(), 201);
     }
 }

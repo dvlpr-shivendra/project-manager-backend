@@ -11,16 +11,11 @@ class Task extends Model
 
     protected $guarded = [];
 
-    protected $with = ['user', 'tags'];
+    protected $with = ['user'];
 
     protected $casts = [
         'is_complete' => 'boolean',
     ];
-
-    public function tags()
-    {
-        return $this->morphToMany(Tag::class, 'taggable');
-    }
 
     public function user() {
         return $this->belongsTo(User::class);

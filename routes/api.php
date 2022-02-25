@@ -28,7 +28,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // Task Routes
     Route::resource('tasks', TaskController::class);
-    Route::post('tasks/{task}/tag', [TaskController::class, 'addTag']);
 
     // Uses Routes
     Route::get('users', [SelectController::class, 'users']);
