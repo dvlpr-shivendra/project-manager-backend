@@ -9,7 +9,14 @@ class Task extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'title',
+        'description',
+        'user_id',
+        'project_id',
+        'deadline',
+        'is_complete',
+    ];
 
     protected $with = ['user'];
 
@@ -17,7 +24,8 @@ class Task extends Model
         'is_complete' => 'boolean',
     ];
 
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 }
