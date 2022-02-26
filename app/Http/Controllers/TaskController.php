@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Tag;
 use App\Models\Task;
 use Illuminate\Http\Request;
 
@@ -28,13 +27,15 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-        return Task::create(array_merge(
+        $task = Task::create(array_merge(
             $request->validate([
                 'title' => ['required'],
                 'project_id' => 'required|exists:projects,id',
             ]),
             ['user_id' => $request->user()->id]
         ));
+
+        return $task->loadMissing('user');
     }
 
     /**
