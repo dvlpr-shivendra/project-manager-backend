@@ -3,10 +3,10 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskController;
-use App\Http\Controllers\TokenController;
+use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SignupController;
-use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SelectController;
+use App\Http\Controllers\ProjectController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,7 +19,7 @@ use App\Http\Controllers\SelectController;
 |
 */
 
-Route::post('token', TokenController::class);
+Route::post('login', LoginController::class);
 Route::post('signup', SignupController::class);
 
 Route::middleware(['auth:sanctum'])->group(function () {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class SignupController extends Controller
 {
@@ -20,6 +21,8 @@ class SignupController extends Controller
             'name' => ['required'],
             'password' => ['required', 'confirmed'],
         ]);
+
+        $credentials['password'] = Hash::make($credentials['password']);
 
         $user = User::create($credentials);
         

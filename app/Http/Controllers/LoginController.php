@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class TokenController extends Controller
+class LoginController extends Controller
 {
     /**
      * Handle the incoming request.
@@ -34,7 +34,10 @@ class TokenController extends Controller
 
         $token = $user->createToken('token');
 
-        return ['token' => $token->plainTextToken];
+        return response([
+            'user' => $user,
+            'token' => $token->plainTextToken
+        ]);
 
     }
 }
