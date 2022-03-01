@@ -37,7 +37,6 @@ class TaskController extends Controller
             [
                 'creator_id' => $request->user()->id,
                 'assignee_id' => $request->user()->id,
-                'status_id' => TaskStatus::defaultId()
             ]
         ));
 

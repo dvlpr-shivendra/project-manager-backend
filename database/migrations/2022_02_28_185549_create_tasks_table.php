@@ -17,7 +17,6 @@ return new class extends Migration
             $table->id();
             $table->string('title')->fulltext();
             $table->text('description')->nullable()->fulltext();
-            $table->foreignId('status_id')->constrained('task_statuses')->onDelete('CASCADE');
             $table->foreignId('creator_id')->constrained('users')->onDelete('CASCADE');
             $table->foreignId('assignee_id')->constrained('users')->onDelete('CASCADE');
             $table->foreignId('project_id')->constrained()->onDelete('CASCADE');

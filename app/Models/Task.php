@@ -15,14 +15,12 @@ class Task extends Model
         'creator_id',
         'assignee_id',
         'project_id',
-        'status_id',
         'deadline',
         'is_complete',
     ];
 
     protected $with = [
         'assignee:id,name,email',
-        'status:id,title,color',
     ];
 
     protected $casts = [
@@ -37,10 +35,5 @@ class Task extends Model
     public function assignee()
     {
         return $this->belongsTo(User::class, 'assignee_id');
-    }
-    
-    public function status()
-    {
-        return $this->belongsTo(TaskStatus::class, 'status_id');
     }
 }
