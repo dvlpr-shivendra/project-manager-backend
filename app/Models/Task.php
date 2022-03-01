@@ -12,20 +12,35 @@ class Task extends Model
     protected $fillable = [
         'title',
         'description',
-        'user_id',
+        'creator_id',
+        'assignee_id',
         'project_id',
+        'status_id',
         'deadline',
         'is_complete',
     ];
 
-    protected $with = ['user'];
+    protected $with = [
+        'assignee:id,name,email',
+        'status:id,title,color',
+    ];
 
     protected $casts = [
         'is_complete' => 'boolean',
     ];
 
-    public function user()
+    public function creator()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'creator_id');
+    }
+    
+    public function assignee()
+    {
+        return $this->belongsTo(User::class, 'assignee_id');
+    }
+    
+    public function status()
+    {
+        return $this->belongsTo(TaskStatus::class, 'status_id');
     }
 }

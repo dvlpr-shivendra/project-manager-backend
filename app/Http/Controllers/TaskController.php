@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
+use App\Models\TaskStatus;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TaskController extends Controller
 {
@@ -32,10 +34,14 @@ class TaskController extends Controller
                 'title' => ['required'],
                 'project_id' => 'required|exists:projects,id',
             ]),
-            ['user_id' => $request->user()->id]
+            [
+                'creator_id' => $request->user()->id,
+                'assignee_id' => $request->user()->id,
+                'status_id' => TaskStatus::defaultId()
+            ]
         ));
 
-        return $task->loadMissing('user');
+        return $task->loadMissing('assignee');
     }
 
     /**
