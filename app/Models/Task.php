@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Task extends Model
 {
@@ -35,5 +36,16 @@ class Task extends Model
     public function assignee()
     {
         return $this->belongsTo(User::class, 'assignee_id');
+    }
+
+    public function screenshots()
+    {
+        return $this->hasMany(Screenshot::class);
+    }
+
+    public function increaseTimeSpent($timeInSeconds)
+    {
+        $this->time_spent += $timeInSeconds;
+        $this->save();
     }
 }

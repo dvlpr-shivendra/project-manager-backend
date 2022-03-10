@@ -7,6 +7,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SignupController;
 use App\Http\Controllers\SelectController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ScreenshotController;
 use App\Http\Controllers\TaskStatusController;
 
 /*
@@ -25,13 +26,13 @@ Route::post('signup', SignupController::class);
 
 Route::middleware(['auth:sanctum'])->group(function () {
     // Project Routes
-    Route::resource('projects', ProjectController::class);
+    Route::apiResource('projects', ProjectController::class);
 
     // Task Status Routes
-    Route::resource('tasks', TaskController::class);
+    Route::apiResource('tasks', TaskController::class);
 
-    // Task Routes
-    Route::resource('task-statuses', TaskStatusController::class);
+    // Screenshot Routes
+    Route::apiResource('screenshots', ScreenshotController::class);
 
     // Uses Routes
     Route::get('users', [SelectController::class, 'users']);
