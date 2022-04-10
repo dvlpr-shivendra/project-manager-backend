@@ -25,6 +25,9 @@ return new class extends Migration
             $table->unsignedInteger('time_spent')->default(0);
             $table->boolean('is_complete')->index()->default(false);
             $table->timestamps();
+
+            $table->index(['creator_id', 'assignee_id', 'project_id']);
+            $table->unique(['project_id', 'title']);
         });
     }
 

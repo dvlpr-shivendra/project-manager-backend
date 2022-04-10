@@ -8,6 +8,7 @@ use App\Http\Controllers\SignupController;
 use App\Http\Controllers\SelectController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ScreenshotController;
+use App\Http\Controllers\TagController;
 use App\Http\Controllers\TaskStatusController;
 
 /*
@@ -30,10 +31,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // Task Status Routes
     Route::apiResource('tasks', TaskController::class);
+    Route::post('tasks/{task}/tags/{tagId}', [TaskController::class, 'addTag']);
+    Route::delete('tasks/{task}/tags/{tagId}', [TaskController::class, 'destroyTag']);
 
     // Screenshot Routes
     Route::apiResource('screenshots', ScreenshotController::class);
 
     // Uses Routes
     Route::get('users', [SelectController::class, 'users']);
+
+    // Tag Routes
+    Route::apiResource('tags', TagController::class)->only(['index', 'store']);
 });

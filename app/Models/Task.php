@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
 
 class Task extends Model
 {
@@ -22,6 +21,7 @@ class Task extends Model
 
     protected $with = [
         'assignee:id,name,email',
+        'tags:id,name,color,background_color',
     ];
 
     protected $casts = [
@@ -47,5 +47,10 @@ class Task extends Model
     {
         $this->time_spent += $timeInSeconds;
         $this->save();
+    }
+
+    public function tags()
+    {
+        return $this->morphToMany(Tag::class, 'taggable');
     }
 }

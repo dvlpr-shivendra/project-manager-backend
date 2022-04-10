@@ -3,9 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
-use App\Models\TaskStatus;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class TaskController extends Controller
 {
@@ -77,5 +75,15 @@ class TaskController extends Controller
     public function destroy(Task $task)
     {
         return $task->delete();
+    }
+
+    public function addTag(Task $task, $tagId)
+    {
+        return $task->tags()->attach($tagId) > 0;
+    }
+
+    public function destroyTag(Task $task, $tagId)
+    {
+        return $task->tags()->detach($tagId) > 0;
     }
 }
