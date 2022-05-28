@@ -9,6 +9,7 @@ use App\Http\Controllers\SelectController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ScreenshotController;
 use App\Http\Controllers\TagController;
+use App\Http\Controllers\TaskCommentController;
 use App\Http\Controllers\TaskStatusController;
 
 /*
@@ -29,10 +30,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Project Routes
     Route::apiResource('projects', ProjectController::class);
 
-    // Task Status Routes
+    // Task Routes
     Route::apiResource('tasks', TaskController::class);
     Route::post('tasks/{task}/tags/{tagId}', [TaskController::class, 'addTag']);
     Route::delete('tasks/{task}/tags/{tagId}', [TaskController::class, 'destroyTag']);
+    Route::apiResource('tasks/{task}/comments', TaskCommentController::class);
 
     // Screenshot Routes
     Route::apiResource('screenshots', ScreenshotController::class);
