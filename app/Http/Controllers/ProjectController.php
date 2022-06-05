@@ -14,7 +14,7 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        return Project::paginate(20);
+        return Project::withCount(['tasks', 'completedTasks'])->paginate(20);
     }
 
     /**
