@@ -43,15 +43,9 @@ class Task extends Model
         return $this->hasMany(Screenshot::class);
     }
     
-    public function comments()
+    public function progresses()
     {
-        return $this->hasMany(TaskComment::class);
-    }
-
-    public function increaseTimeSpent($timeInSeconds)
-    {
-        $this->time_spent += $timeInSeconds;
-        $this->save();
+        return $this->hasMany(Progress::class);
     }
 
     public function tags()

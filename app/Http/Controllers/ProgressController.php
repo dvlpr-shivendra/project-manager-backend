@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Task;
 use App\Models\Progress;
 use Illuminate\Http\Request;
 
@@ -12,9 +13,9 @@ class ProgressController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Task $task)
     {
-        //
+        return $task->progresses()->paginate(10);
     }
 
     /**
@@ -23,9 +24,14 @@ class ProgressController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Task $task, Request $request)
     {
-        //
+        $progress = $task->progresses()->create([
+            ...$request->all(),
+            'user_id' => $request->user()->id,
+        ]);
+
+        return $progress;
     }
 
     /**

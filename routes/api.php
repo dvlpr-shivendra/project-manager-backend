@@ -1,16 +1,15 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TagController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SignupController;
 use App\Http\Controllers\SelectController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ProgressController;
 use App\Http\Controllers\ScreenshotController;
-use App\Http\Controllers\TagController;
 use App\Http\Controllers\TaskCommentController;
-use App\Http\Controllers\TaskStatusController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,6 +34,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('tasks/{task}/tags/{tagId}', [TaskController::class, 'addTag']);
     Route::delete('tasks/{task}/tags/{tagId}', [TaskController::class, 'destroyTag']);
     Route::apiResource('tasks/{task}/comments', TaskCommentController::class);
+    Route::apiResource('tasks/{task}/progresses', ProgressController::class);
 
     // Screenshot Routes
     Route::apiResource('screenshots', ScreenshotController::class);
