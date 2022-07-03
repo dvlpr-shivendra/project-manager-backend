@@ -22,7 +22,6 @@ return new class extends Migration
             $table->foreignId('project_id')->constrained()->onDelete('CASCADE');
             $table->timestamp('deadline')->nullable();
             $table->unsignedInteger('time_estimate')->nullable();
-            $table->unsignedInteger('time_spent')->default(0);
             $table->boolean('is_complete')->index()->default(false);
             $table->timestamps();
 

@@ -13,10 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('screenshots', function (Blueprint $table) {
+        Schema::create('progress', function (Blueprint $table) {
             $table->id();
             $table->foreignId('task_id')->constrained()->onDelete('CASCADE');
-            $table->string('path');
+            $table->foreignId('user_id')->constrained()->onDelete('CASCADE');
+            $table->unsignedInteger('duration')->default(0);
             $table->timestamps();
         });
     }
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('screenshots');
+        Schema::dropIfExists('progress');
     }
 };
