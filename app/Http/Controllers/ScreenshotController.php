@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Progress;
 use App\Models\Screenshot;
-use App\Models\Task;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ScreenshotController extends Controller
 {
@@ -27,19 +29,27 @@ class ScreenshotController extends Controller
     {
         $request->validate([
             'task_id' => 'required|exists:tasks,id',
-            'screenshot' => 'required'
+            'screenshot' => 'required', Rule::dimensions()->maxWidth(1920)->maxHeight(1080),
         ]);
 
         $screenshotPath = $request->file('screenshot')->store('screenshots');
 
-        $task = Task::find($request->task_id);
+        $progress = Progress::where('task_id', $request->task_id)
+            ->whereDate('created_at', Carbon::today())->first();
 
-        $task->screenshots()->create([
+        if (!$progress) {
+            $progress = Progress::create([
+                'task_id' => $request->task_id,
+                'user_id' => $request->user()->id,
+            ]);
+        }
+
+        $progress->screenshots()->create([
             'path' => $screenshotPath
         ]);
-        
-        $task->increaseTimeSpent(2 * 60);
-        
+
+        $progress->increaseDuration(2 * 60);
+
         return response()->noContent();
     }
 

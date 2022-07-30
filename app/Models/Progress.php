@@ -10,4 +10,15 @@ class Progress extends Model
     use HasFactory;
 
     protected $guarded = [];
+
+    public function increaseDuration($seconds)
+    {
+        $this->duration += $seconds;
+        $this->save();
+    }
+
+    public function screenshots()
+    {
+        return $this->hasMany(Screenshot::class);
+    }
 }
