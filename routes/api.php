@@ -6,6 +6,7 @@ use App\Http\Controllers\TaskController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SignupController;
 use App\Http\Controllers\SelectController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProgressController;
 use App\Http\Controllers\ScreenshotController;
@@ -24,6 +25,7 @@ use App\Http\Controllers\TaskCommentController;
 
 Route::post('login', LoginController::class);
 Route::post('signup', SignupController::class);
+Route::get('search/{searchQuery}', SearchController::class);
 
 Route::middleware(['auth:sanctum'])->group(function () {
     // Project Routes
