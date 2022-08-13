@@ -61,10 +61,9 @@ class TaskController extends Controller
      */
     public function update(Request $request, Task $task)
     {
-        // validate if task title is unique inside project
-        $request->validate([
-            'title' => ['required', 'unique:tasks,title,NULL,id,project_id,' . $task->project_id],
-        ]);
+        if ($request->title && Task::where('title', $request->title)->where('id', '!=', $task->id)->where('project_id', $task->project_id)->exists()) {
+            return response()->json(['message' => 'Task with this title already exists'], 422);
+        }
 
         $task->update($request->all());
 
