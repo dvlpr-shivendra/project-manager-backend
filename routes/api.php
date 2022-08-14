@@ -25,9 +25,11 @@ use App\Http\Controllers\TaskCommentController;
 
 Route::post('login', LoginController::class);
 Route::post('signup', SignupController::class);
-Route::get('search/{searchQuery}', SearchController::class);
 
 Route::middleware(['auth:sanctum'])->group(function () {
+    
+    Route::get('search/{searchQuery}', SearchController::class);
+
     // Project Routes
     Route::apiResource('projects', ProjectController::class);
 
