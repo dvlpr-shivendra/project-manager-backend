@@ -16,12 +16,17 @@ class SearchController extends Controller
 
     public function postgresSearchProjectsAndTasks()
     {
-        $query = preg_replace('!\s+!', ':*|', request()->searchQuery);
+        $query = preg_replace('!\s+!', ':*|', request()->searchQuery); // replace spaces with :*|
 
         $query .= ':*';
 
-        $projects = Project::whereRaw("name @@ to_tsquery('$query') OR description @@ to_tsquery('$query')")->get(['id', 'name']);
-        $tasks = Task::whereRaw("title @@ to_tsquery('$query') OR description @@ to_tsquery('$query')")->get(['id', 'title']);
+        $projects = Project::whereRaw("name @@ to_tsquery('$query') OR description @@ to_tsquery('$query')")
+            ->take(10)
+            ->get(['id', 'name']);
+
+        $tasks = Task::whereRaw("title @@ to_tsquery('$query') OR description @@ to_tsquery('$query')")
+            ->with('project:id,name')->take(10)
+            ->get(['id', 'title', 'project_id']);
 
         return [
             'projects' => $projects,
