@@ -28,6 +28,11 @@ class Task extends Model
         'is_complete' => 'boolean',
     ];
 
+    public function project()
+    {
+        return $this->belongsTo(Project::class, 'project_id');
+    }
+    
     public function creator()
     {
         return $this->belongsTo(User::class, 'creator_id');
