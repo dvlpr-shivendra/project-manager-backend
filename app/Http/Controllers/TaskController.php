@@ -83,7 +83,9 @@ class TaskController extends Controller
 
     public function addTag(Task $task, $tagId)
     {
-        return $task->tags()->attach($tagId) > 0;
+        $task->tags()->attach($tagId);
+
+        return [ 'message' => 'Tag added successfully' ];
     }
 
     public function destroyTag(Task $task, $tagId)
