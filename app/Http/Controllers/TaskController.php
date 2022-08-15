@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class TaskController extends Controller
 {
@@ -38,7 +39,7 @@ class TaskController extends Controller
             ]
         ));
 
-        return $task->loadMissing(['assignee', 'tags']);
+        return $task->loadMissing(['assignee', 'tags', 'attachments']);
     }
 
     /**
@@ -91,5 +92,38 @@ class TaskController extends Controller
     public function destroyTag(Task $task, $tagId)
     {
         return $task->tags()->detach($tagId) > 0;
+    }
+
+    public function addAttachment(Task $task, Request $request)
+    {
+        $request->validate([
+            'file' => 'required|max:2048',
+        ]);
+
+        $path = $request->file('file')->store('attachments');
+        $size = $request->file('file')->getSize();
+        $url = Storage::url($path);
+
+        $attachment = $task->attachments()->create([
+            'path' => $path,
+            'size' => $size,
+            'url' => $url,
+            'name' => $request->file('file')->getClientOriginalName(),
+        ]);
+
+        return $attachment;
+    }
+
+    public function destroyAttachment(Task $task, $attachmentId)
+    {
+        $attachment = $task->attachments()->find($attachmentId);
+
+        if (!$attachment) {
+            return response()->json(['message' => 'Attachment not found'], 404);
+        }
+
+        $attachment->delete();
+
+        return [ 'message' => 'Attachment deleted successfully' ];
     }
 }

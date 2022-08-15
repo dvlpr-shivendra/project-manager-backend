@@ -22,6 +22,7 @@ class Task extends Model
     protected $with = [
         'assignee:id,name,email',
         'tags:id,name,color,background_color',
+        'attachments',
     ];
 
     protected $casts = [
@@ -56,5 +57,10 @@ class Task extends Model
     public function tags()
     {
         return $this->morphToMany(Tag::class, 'taggable');
+    }
+    
+    public function attachments()
+    {
+        return $this->hasMany(Attachment::class);
     }
 }

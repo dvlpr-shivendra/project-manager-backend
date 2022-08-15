@@ -29,14 +29,16 @@ Route::post('signup', SignupController::class);
 Route::middleware(['auth:sanctum'])->group(function () {
     
     Route::get('search/{searchQuery}', SearchController::class);
-
+    
     // Project Routes
     Route::apiResource('projects', ProjectController::class);
-
+    
     // Task Routes
     Route::apiResource('tasks', TaskController::class);
     Route::post('tasks/{task}/tags/{tagId}', [TaskController::class, 'addTag']);
     Route::delete('tasks/{task}/tags/{tagId}', [TaskController::class, 'destroyTag']);
+    Route::post('tasks/{task}/attachments', [TaskController::class, 'addAttachment']);
+    Route::delete('tasks/{task}/attachments/{tagId}', [TaskController::class, 'destroyAttachment']);
     Route::apiResource('tasks/{task}/comments', TaskCommentController::class);
     Route::apiResource('tasks/{task}/progresses', ProgressController::class);
 
