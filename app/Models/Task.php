@@ -21,6 +21,7 @@ class Task extends Model
 
     protected $with = [
         'assignee:id,name,email',
+        'followers:id,name,email',
         'tags:id,name,color,background_color',
         'attachments',
     ];
@@ -62,5 +63,10 @@ class Task extends Model
     public function attachments()
     {
         return $this->hasMany(Attachment::class);
+    }
+
+    public function followers()
+    {
+        return $this->belongsToMany(User::class, 'task_followers');
     }
 }

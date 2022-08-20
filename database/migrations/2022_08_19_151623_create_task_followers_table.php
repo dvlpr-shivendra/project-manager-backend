@@ -13,12 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('attachments', function (Blueprint $table) {
+        Schema::create('task_followers', function (Blueprint $table) {
             $table->id();
-            $table->string('path');
-            $table->string('name');
-            $table->unsignedInteger('size');
-            $table->foreignId('task_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('task_id')->constrained()->onDelete('CASCADE');
+            $table->foreignId('user_id')->constrained()->onDelete('CASCADE');
             $table->timestamps();
         });
     }
@@ -30,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('attachments');
+        Schema::dropIfExists('task_followers');
     }
 };

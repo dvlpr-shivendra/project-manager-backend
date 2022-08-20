@@ -91,7 +91,9 @@ class TaskController extends Controller
 
     public function destroyTag(Task $task, $tagId)
     {
-        return $task->tags()->detach($tagId) > 0;
+        $task->tags()->detach($tagId);
+
+        return [ 'message' => 'Tag removed successfully' ];
     }
 
     public function addAttachment(Task $task, Request $request)
@@ -125,5 +127,19 @@ class TaskController extends Controller
         $attachment->delete();
 
         return [ 'message' => 'Attachment deleted successfully' ];
+    }
+
+    public function addFollower(Task $task, $userId)
+    {
+        $task->followers()->attach($userId);
+
+        return [ 'message' => 'Follower added successfully' ];
+    }
+
+    public function destroyFollower(Task $task, $userId)
+    {
+        $task->followers()->detach($userId);
+
+        return [ 'message' => 'Follower removed successfully' ];
     }
 }

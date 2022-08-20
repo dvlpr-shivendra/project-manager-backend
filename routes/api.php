@@ -37,6 +37,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('tasks', TaskController::class);
     Route::post('tasks/{task}/tags/{tagId}', [TaskController::class, 'addTag']);
     Route::delete('tasks/{task}/tags/{tagId}', [TaskController::class, 'destroyTag']);
+    Route::post('tasks/{task}/followers/{userId}', [TaskController::class, 'addFollower']);
+    Route::delete('tasks/{task}/followers/{userId}', [TaskController::class, 'destroyFollower']);
     Route::post('tasks/{task}/attachments', [TaskController::class, 'addAttachment']);
     Route::delete('tasks/{task}/attachments/{tagId}', [TaskController::class, 'destroyAttachment']);
     Route::apiResource('tasks/{task}/comments', TaskCommentController::class);
