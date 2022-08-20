@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\RecordsActivity;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Task extends Model
 {
-    use HasFactory;
+    use HasFactory, RecordsActivity;
 
     protected $fillable = [
         'title',
@@ -29,6 +30,10 @@ class Task extends Model
     protected $casts = [
         'is_complete' => 'boolean',
     ];
+
+    protected static $recordableEvents = ['created', 'updated', 'deleted'];
+
+    protected $touches = ['project'];
 
     public function project()
     {
