@@ -35,6 +35,8 @@ class Task extends Model
 
     protected $touches = ['project'];
 
+    protected $appends = ['timeSpent'];
+
     public function project()
     {
         return $this->belongsTo(Project::class, 'project_id');
@@ -73,5 +75,10 @@ class Task extends Model
     public function followers()
     {
         return $this->belongsToMany(User::class, 'task_followers');
+    }
+
+    public function getTimeSpentAttribute()
+    {
+        return $this->progresses()->sum('duration');
     }
 }
