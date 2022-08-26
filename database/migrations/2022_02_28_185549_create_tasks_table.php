@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('title')->fulltext();
             $table->text('description')->nullable()->fulltext();
             $table->foreignId('creator_id')->constrained('users')->onDelete('CASCADE');
-            $table->foreignId('assignee_id')->constrained('users')->onDelete('CASCADE');
+            $table->foreignId('assignee_id')->nullable()->constrained('users')->onDelete('CASCADE');
             $table->foreignId('project_id')->constrained()->onDelete('CASCADE');
             $table->timestamp('deadline')->nullable();
             $table->unsignedInteger('time_estimate')->nullable();
