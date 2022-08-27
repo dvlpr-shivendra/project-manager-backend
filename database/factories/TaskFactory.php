@@ -13,9 +13,14 @@ class TaskFactory extends Factory
 {
     public function definition()
     {
+        $user = User::first() ?? User::factory(1)->create()->first();
+        $project = Project::first() ?? Project::factory(1)->create()->first();
+
         return [
             'title' => $this->faker->sentence(5),
             'description' => $this->faker->paragraph(),
+            'creator_id' => $user->id,
+            'project_id' => $project->id,
         ];
     }
 }
