@@ -39,7 +39,7 @@ class TaskController extends Controller
             ]
         ));
 
-        return $task->loadMissing(['assignee', 'tags', 'attachments']);
+        return $task->loadMissing(['assignee', 'tags', 'attachments', 'followers']);
     }
 
     /**
