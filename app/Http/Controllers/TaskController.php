@@ -23,7 +23,7 @@ class TaskController extends Controller
         }
         
         if (request()->assignee_id) {
-            $tasks->whereRelation('assignee', 'user.id', request()->assignee_id);
+            $tasks->whereRelation('assignee', 'users.id', request()->assignee_id);
         }
 
         return $tasks->paginate(100);
