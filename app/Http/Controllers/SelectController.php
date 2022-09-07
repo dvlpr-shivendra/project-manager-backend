@@ -13,7 +13,7 @@ class SelectController extends Controller
             'name' => ['required']
         ]);
         
-        return User::where('name', 'LIKE', "$request->name%")
+        return User::where('name', 'ILIKE', "$request->name%")
             ->take(5)
             ->get();
     }
