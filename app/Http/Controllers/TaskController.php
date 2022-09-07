@@ -18,12 +18,12 @@ class TaskController extends Controller
         $tasks = Task::where('project_id', request()->project_id)
             ->orderByDesc('updated_at');
 
-        if (request()->tag_id) {
-            $tasks->whereRelation('tags', 'tags.id', request()->tag_id);
+        if (request()->tag) {
+            $tasks->whereRelation('tags', 'tags.name', 'ILIKE', '%' . request()->tag. '%');
         }
         
-        if (request()->assignee_id) {
-            $tasks->whereRelation('assignee', 'users.id', request()->assignee_id);
+        if (request()->assignee) {
+            $tasks->whereRelation('assignee', 'users.name', 'ILIKE', '%' . request()->assignee . '%');
         }
 
         return $tasks->paginate(100);
