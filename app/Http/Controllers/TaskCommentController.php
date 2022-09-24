@@ -32,7 +32,7 @@ class TaskCommentController extends Controller
 
         $attributes['user_id'] = request()->user()->id;
 
-        return $task->comments()->create($attributes);
+        return $task->comments()->create($attributes)->loadMissing('user');
     }
 
     /**
