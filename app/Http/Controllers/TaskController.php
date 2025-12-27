@@ -21,7 +21,7 @@ class TaskController extends Controller
         if (request()->tag) {
             $tasks->whereRelation('tags', 'tags.name', 'ILIKE', '%' . request()->tag. '%');
         }
-        
+
         if (request()->assignee) {
             $tasks->whereRelation('assignee', 'users.name', 'ILIKE', '%' . request()->assignee . '%');
         }

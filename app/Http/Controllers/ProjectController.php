@@ -5,6 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Project;
 use Illuminate\Http\Request;
 
+use App\Exports\TasksExport;
+use App\imports\TasksImport;
+
+use Maatwebsite\Excel\Facades\Excel;
+
 class ProjectController extends Controller
 {
     /**
@@ -70,5 +75,21 @@ class ProjectController extends Controller
     public function destroy(Project $project)
     {
         return $project->delete();
+    }
+
+    public function export()
+    {
+        return Excel::download(new TasksExport, 'tasks.xlsx');
+    }
+
+    public function import(Request $request, int $id)
+    {   
+        // $request->validate([
+        //     'file' => ['required', 'file', 'mimes:xlsx,csv'],
+        // ]);
+
+        Excel::import(new TasksImport($id), $request->file('file'));
+        
+        return response()->noContent();
     }
 }

@@ -27,12 +27,14 @@ Route::post('login', LoginController::class);
 Route::post('signup', SignupController::class);
 
 Route::middleware(['auth:sanctum'])->group(function () {
-    
+
     Route::get('search/{searchQuery}', SearchController::class);
-    
+
     // Project Routes
+    Route::get('projects/{id}/tasks/export', [ProjectController::class, 'export'])->name("projects.export");
+    Route::post('projects/{id}/tasks/import', [ProjectController::class, 'import'])->name("projects.import");
     Route::apiResource('projects', ProjectController::class);
-    
+
     // Task Routes
     Route::apiResource('tasks', TaskController::class);
     Route::post('tasks/{task}/tags/{tagId}', [TaskController::class, 'addTag']);

@@ -40,12 +40,12 @@ class Task extends Model
     {
         return $this->belongsTo(Project::class, 'project_id');
     }
-    
+
     public function creator()
     {
         return $this->belongsTo(User::class, 'creator_id');
     }
-    
+
     public function assignee()
     {
         return $this->belongsTo(User::class, 'assignee_id');
@@ -55,7 +55,7 @@ class Task extends Model
     {
         return $this->hasMany(Screenshot::class);
     }
-    
+
     public function progresses()
     {
         return $this->hasMany(Progress::class);
@@ -65,12 +65,12 @@ class Task extends Model
     {
         return $this->morphToMany(Tag::class, 'taggable');
     }
-    
+
     public function attachments()
     {
         return $this->hasMany(Attachment::class);
     }
-    
+
     public function comments()
     {
         return $this->hasMany(TaskComment::class);
