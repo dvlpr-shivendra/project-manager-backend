@@ -36,6 +36,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('projects', ProjectController::class);
 
     // Task Routes
+    Route::delete('tasks/bulk', [TaskController::class, 'bulkDelete']);
     Route::apiResource('tasks', TaskController::class);
     Route::post('tasks/{task}/tags/{tagId}', [TaskController::class, 'addTag']);
     Route::delete('tasks/{task}/tags/{tagId}', [TaskController::class, 'destroyTag']);

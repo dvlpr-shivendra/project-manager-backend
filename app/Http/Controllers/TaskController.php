@@ -19,7 +19,7 @@ class TaskController extends Controller
             ->orderByDesc('updated_at');
 
         if (request()->tag) {
-            $tasks->whereRelation('tags', 'tags.name', 'ILIKE', '%' . request()->tag. '%');
+            $tasks->whereRelation('tags', 'tags.name', 'ILIKE', '%' . request()->tag . '%');
         }
 
         if (request()->assignee) {
@@ -86,6 +86,24 @@ class TaskController extends Controller
      * @param  \App\Models\Task  $task
      * @return \Illuminate\Http\Response
      */
+    public function bulkDelete(Request $request)
+    {
+        $ids = $request->validate([
+            'ids' => ['required', 'array'],
+            'ids.*' => ['integer', 'exists:tasks,id'],
+        ])['ids'];
+
+        Task::whereIn('id', $ids)->delete();
+
+        return response()->noContent();
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\Task  $task
+     * @return \Illuminate\Http\Response
+     */
     public function destroy(Task $task)
     {
         return $task->delete();
@@ -95,14 +113,14 @@ class TaskController extends Controller
     {
         $task->tags()->attach($tagId);
 
-        return [ 'message' => 'Tag added successfully' ];
+        return ['message' => 'Tag added successfully'];
     }
 
     public function destroyTag(Task $task, $tagId)
     {
         $task->tags()->detach($tagId);
 
-        return [ 'message' => 'Tag removed successfully' ];
+        return ['message' => 'Tag removed successfully'];
     }
 
     public function addAttachment(Task $task, Request $request)
@@ -135,20 +153,20 @@ class TaskController extends Controller
 
         $attachment->delete();
 
-        return [ 'message' => 'Attachment deleted successfully' ];
+        return ['message' => 'Attachment deleted successfully'];
     }
 
     public function addFollower(Task $task, $userId)
     {
         $task->followers()->attach($userId);
 
-        return [ 'message' => 'Follower added successfully' ];
+        return ['message' => 'Follower added successfully'];
     }
 
     public function destroyFollower(Task $task, $userId)
     {
         $task->followers()->detach($userId);
 
-        return [ 'message' => 'Follower removed successfully' ];
+        return ['message' => 'Follower removed successfully'];
     }
 }
