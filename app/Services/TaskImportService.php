@@ -4,23 +4,39 @@ namespace App\Services;
 
 use App\Models\Task;
 use App\Models\User;
+use Illuminate\Support\Collection;
 
 class TaskImportService
 {
-    public function handle($row, $projectId)
+    public function handle(Collection $row, int $projectId): ?Task
     {
-        Task::updateOrCreate(
+        if (empty($row['title']) || empty($row['creator_email'])) {
+            return null;
+        }
+
+        $creatorId = User::whereEmail($row['creator_email'])->value('id');
+        if (!$creatorId) {
+            return null;
+        }
+
+        $assigneeId = !empty($row['assignee_email'])
+            ? User::whereEmail($row['assignee_email'])->value('id')
+            : null;
+
+        return Task::updateOrCreate(
             [
                 'project_id' => $projectId,
-                'title' => $row[0],
+                'title' => $row['title'],
             ],
             [
-                'description' => $row[1],
-                'creator_id' => User::whereEmail($row[2])->firstOrFail()->id,
-                'assignee_id' => User::whereEmail($row[3])->value('id'),
-                'deadline' => empty($row[4]) ? null : $row[4],
-                'time_estimate' => is_numeric($row[5]) ? (int) $row[5] : null,
-                'is_complete' => filter_var($row[6], FILTER_VALIDATE_BOOLEAN),
+                'description' => $row['description'] ?? null,
+                'creator_id' => $creatorId,
+                'assignee_id' => $assigneeId,
+                'deadline' => empty($row['deadline']) ? null : $row['deadline'],
+                'time_estimate' => is_numeric($row['time_estimate'] ?? null)
+                    ? (int) $row['time_estimate']
+                    : null,
+                'is_complete' => filter_var($row['is_complete'] ?? false, FILTER_VALIDATE_BOOLEAN),
             ]
         );
     }

@@ -1,20 +1,21 @@
 <?php
 
-namespace App\imports;
+namespace App\Imports;
 
 use App\Services\TaskImportService;
-use Maatwebsite\Excel\Concerns\ToCollection;
 use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\ToCollection;
+use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class TasksImport implements ToCollection
+class TasksImport implements ToCollection, WithHeadingRow
 {
     public function __construct(private int $projectId) {}
 
-    public function collection(Collection $rows)
+    public function collection(Collection $rows): void
     {
-        $rows->skip(1)->each(fn ($row) =>
-            app(TaskImportService::class)->handle($row, $this->projectId)
+        $rows->each(fn ($row) =>
+            app(TaskImportService::class)
+                ->handle($row, $this->projectId)
         );
     }
 }
-
