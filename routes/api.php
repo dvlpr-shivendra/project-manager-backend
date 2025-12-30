@@ -11,6 +11,9 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProgressController;
 use App\Http\Controllers\ScreenshotController;
 use App\Http\Controllers\TaskCommentController;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,7 +29,53 @@ use App\Http\Controllers\TaskCommentController;
 Route::post('login', LoginController::class);
 Route::post('signup', SignupController::class);
 
+// routes/api.php
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
+
+Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+    Route::get('/users', function () {
+        return User::with('roles', 'permissions')->get();
+    });
+
+    Route::get('/roles', fn() => Role::with('permissions')->get());
+
+    Route::get('/permissions', fn() => Permission::all());
+
+    Route::post(
+        '/roles',
+        fn(Request $r) =>
+        Role::create(['name' => $r->name])
+    );
+
+    Route::post(
+        '/permissions',
+        fn(Request $r) =>
+        Permission::create(['name' => $r->name])
+    );
+
+    Route::post('/roles/{role}/permissions', function (Request $r, Role $role) {
+        $role->syncPermissions($r->permissions);
+        return $role->load('permissions');
+    });
+});
+
+
 Route::middleware(['auth:sanctum'])->group(function () {
+
+    Route::get('/me', function () {
+
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        return [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'roles' => $user->getRoleNames(),
+            'permissions' => $user->getAllPermissions()->pluck('name'),
+        ];
+    });
 
     Route::get('search/{searchQuery}', SearchController::class);
 
@@ -51,7 +100,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('screenshots', ScreenshotController::class);
 
     // Uses Routes
-    Route::get('users', [SelectController::class, 'users']);
+    Route::get('select/users', [SelectController::class, 'users']);
 
     // Tag Routes
     Route::apiResource('tags', TagController::class)->only(['index', 'store']);
