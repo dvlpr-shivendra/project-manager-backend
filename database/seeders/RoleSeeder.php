@@ -14,17 +14,20 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        Role::firstOrCreate(['name' => 'admin']);
-        Role::firstOrCreate(['name' => 'user']);
+        Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'sanctum']);
+        Role::firstOrCreate(['name' => 'user', 'guard_name' => 'sanctum']);
 
-        User::first()->assignRole('admin');
+        User::first()->assignRole(['name' => 'admin']);
 
         $entities = ['project', 'task'];
         $commonActions = ['create', 'update', 'delete'];
 
         foreach ($entities as $entity) {
             foreach ($commonActions as $action) {
-                Permission::create(['name' => $action . '-' . $entity]);
+                Permission::firstOrCreate([
+                    'name' => $action . '-' . $entity,
+                    'guard_name' => 'sanctum',
+                ]);
             }
         }
     }

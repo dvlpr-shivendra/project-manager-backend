@@ -14,6 +14,8 @@ use App\Http\Controllers\TaskCommentController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,10 +31,6 @@ use Illuminate\Support\Facades\Auth;
 Route::post('login', LoginController::class);
 Route::post('signup', SignupController::class);
 
-// routes/api.php
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
-
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::get('/users', function () {
         return User::with('roles', 'permissions')->get();
@@ -45,13 +43,13 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::post(
         '/roles',
         fn(Request $r) =>
-        Role::create(['name' => $r->name])
+        Role::create(['name' => $r->name, 'guard_name' => 'sanctum'])
     );
 
     Route::post(
         '/permissions',
         fn(Request $r) =>
-        Permission::create(['name' => $r->name])
+        Permission::create(['name' => $r->name, 'guard_name' => 'sanctum',])
     );
 
     Route::post('/roles/{role}/permissions', function (Request $r, Role $role) {
