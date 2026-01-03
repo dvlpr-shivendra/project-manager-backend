@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
-            $table->string('title')->fulltext();
+            $table->string('title')->nullable()->fulltext();
             $table->text('description')->nullable()->fulltext();
             $table->foreignId('creator_id')->constrained('users')->onDelete('CASCADE');
             $table->foreignId('assignee_id')->nullable()->constrained('users')->onDelete('CASCADE');
@@ -26,7 +26,6 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index(['creator_id', 'assignee_id', 'project_id']);
-            $table->unique(['project_id', 'title']);
         });
     }
 
