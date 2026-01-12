@@ -4,65 +4,71 @@ namespace App\Http\Controllers;
 
 use App\Models\Tag;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class TagController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Display a listing of tags.
      */
     public function index()
     {
-        return Tag::all();
+        $tags = Tag::orderBy('name')->get();
+        return response()->json($tags);
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * Store a newly created tag.
      */
     public function store(Request $request)
     {
-        return Tag::create($request->validate([
-            'name' => ['required'],
-            'color' => ['required'],
-            'background_color' => ['required'],
-        ]));
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:tags,name',
+            'color' => 'required|string|max:7',
+            'background_color' => 'required|string|max:7',
+        ]);
+
+        $tag = Tag::create($validated);
+        
+        return response()->json($tag, 201);
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Display the specified tag.
      */
-    public function show($id)
+    public function show(Tag $tag)
     {
-        //
+        return response()->json($tag);
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Update the specified tag.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Tag $tag)
     {
-        //
+        $validated = $request->validate([
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('tags', 'name')->ignore($tag->id)
+            ],
+            'color' => 'required|string|max:7',
+            'background_color' => 'required|string|max:7',
+        ]);
+
+        $tag->update($validated);
+        
+        return response()->json($tag);
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Remove the specified tag.
      */
-    public function destroy($id)
+    public function destroy(Tag $tag)
     {
-        //
+        $tag->delete();
+        
+        return response()->json(null, 204);
     }
 }

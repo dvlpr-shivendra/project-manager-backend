@@ -106,7 +106,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('select/users', [SelectController::class, 'users']);
 
     // Tag Routes
-    Route::apiResource('tags', TagController::class)->only(['index', 'store']);
+    Route::apiResource('tags', TagController::class);
 
     // File routes
     Route::post('/files', [FileController::class, 'store'])->name('files.store');
