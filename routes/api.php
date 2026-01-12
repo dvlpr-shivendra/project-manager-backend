@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TaskController;
@@ -30,6 +31,10 @@ use Spatie\Permission\Models\Permission;
 
 Route::post('login', LoginController::class);
 Route::post('signup', SignupController::class);
+
+ Route::get('/files/{file}', [FileController::class, 'show'])
+        ->name('files.show')
+        ->where('file', '[a-zA-Z0-9]+\.[a-z]+');
 
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::get('/users', function () {
@@ -97,9 +102,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Screenshot Routes
     Route::apiResource('screenshots', ScreenshotController::class);
 
-    // Uses Routes
+    // Select User Routes
     Route::get('select/users', [SelectController::class, 'users']);
 
     // Tag Routes
     Route::apiResource('tags', TagController::class)->only(['index', 'store']);
+
+    // File routes
+    Route::post('/files', [FileController::class, 'store'])->name('files.store');
+    Route::delete('/files/{file}', [FileController::class, 'destroy'])
+        ->name('files.destroy')
+        ->where('file', '[a-zA-Z0-9]+\.[a-z]+');
 });
