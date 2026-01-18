@@ -35,6 +35,7 @@ Route::post('signup', SignupController::class);
  Route::get('/files/{file}', [FileController::class, 'show'])
         ->name('files.show')
         ->where('file', '[a-zA-Z0-9]+\.[a-z]+');
+Route::get('/tasks/{task}/attachments/{attachment}/download', [TaskController::class, 'downloadAttachment']);
 
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::get('/users', function () {

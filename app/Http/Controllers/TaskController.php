@@ -165,4 +165,16 @@ class TaskController extends Controller
 
         return ['message' => 'Follower removed successfully'];
     }
+
+    public function downloadAttachment(Task $task, $attachmentId)
+    {
+        $attachment = $task->attachments()->findOrFail($attachmentId);
+
+        if (!Storage::exists($attachment->path)) {
+            abort(404, 'File not found');
+        }
+
+        return Storage::download($attachment->path, $attachment->name);
+    }
+
 }
