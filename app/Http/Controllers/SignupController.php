@@ -25,6 +25,8 @@ class SignupController extends Controller
         $credentials['password'] = Hash::make($credentials['password']);
 
         $user = User::create($credentials);
+
+        $user->assignRole(['name' => 'user']);
         
         $token = $user->createToken('token');
 
