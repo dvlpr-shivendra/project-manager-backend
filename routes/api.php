@@ -12,6 +12,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProgressController;
 use App\Http\Controllers\ScreenshotController;
 use App\Http\Controllers\TaskCommentController;
+use App\Http\Controllers\LLMController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -114,4 +115,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::delete('/files/{file}', [FileController::class, 'destroy'])
         ->name('files.destroy')
         ->where('file', '[a-zA-Z0-9]+\.[a-z]+');
+
+    // LLM routes
+    Route::post('/llm/rephrase', [LLMController::class, 'rephrase']);
 });
