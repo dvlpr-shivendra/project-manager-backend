@@ -17,4 +17,26 @@ class LLMController extends Controller
             'result' => $llm->rephrase($request->text),
         ]);
     }
+
+    public function generateDescription(Request $request, LLMService $llm)
+    {
+        $request->validate([
+            'title' => 'required|string',
+        ]);
+
+        return response()->json([
+            'result' => $llm->generateDescription($request->title),
+        ]);
+    }
+
+    public function generateTitle(Request $request, LLMService $llm)
+    {
+        $request->validate([
+            'description' => 'required|string',
+        ]);
+
+        return response()->json([
+            'result' => $llm->generateTitle($request->description),
+        ]);
+    }
 }

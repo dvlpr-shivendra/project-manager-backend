@@ -117,5 +117,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
         ->where('file', '[a-zA-Z0-9]+\.[a-z]+');
 
     // LLM routes
-    Route::post('/llm/rephrase', [LLMController::class, 'rephrase']);
+    Route::prefix('llm')->group(function () {
+        Route::post('/rephrase', [LLMController::class, 'rephrase']);
+        Route::post('/generate-description', [LLMController::class, 'generateDescription']);
+        Route::post('/generate-title', [LLMController::class, 'generateTitle']);
+    });
 });
