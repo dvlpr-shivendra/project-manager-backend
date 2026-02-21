@@ -63,6 +63,11 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
         $role->syncPermissions($r->permissions);
         return $role->load('permissions');
     });
+
+    Route::post('/users/{user}/roles', function (Request $r, User $user) {
+        $user->syncRoles($r->roles);
+        return $user->load('roles');
+    });
 });
 
 
