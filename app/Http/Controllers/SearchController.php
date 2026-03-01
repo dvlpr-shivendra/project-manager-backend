@@ -16,17 +16,41 @@ class SearchController extends Controller
 
     public function postgresSearchProjectsAndTasks()
     {
-        $query = preg_replace('!\s+!', ':*|', request()->searchQuery); // replace spaces with :*|
+        $search = request()->searchQuery;
 
-        $query .= ':*';
-
-        $projects = Project::whereRaw("name @@ to_tsquery('$query') OR description @@ to_tsquery('$query')")
+        $projects = Project::selectRaw("
+            id,
+            name,
+            ts_rank(
+                to_tsvector('english', coalesce(name,'') || ' ' || coalesce(description,'')),
+                plainto_tsquery('english', ?)
+            ) as rank
+        ", [$search])
+            ->whereRaw("
+            to_tsvector('english', coalesce(name,'') || ' ' || coalesce(description,''))
+            @@ plainto_tsquery('english', ?)
+        ", [$search])
+            ->orderByDesc('rank')
             ->take(10)
-            ->get(['id', 'name']);
+            ->get();
 
-        $tasks = Task::whereRaw("title @@ to_tsquery('$query') OR description @@ to_tsquery('$query')")
-            ->with('project:id,name')->take(10)
-            ->get(['id', 'title', 'project_id']);
+        $tasks = Task::selectRaw("
+            id,
+            title,
+            project_id,
+            ts_rank(
+                to_tsvector('english', coalesce(title,'') || ' ' || coalesce(description,'')),
+                plainto_tsquery('english', ?)
+            ) as rank
+        ", [$search])
+            ->whereRaw("
+            to_tsvector('english', coalesce(title,'') || ' ' || coalesce(description,''))
+            @@ plainto_tsquery('english', ?)
+        ", [$search])
+            ->with('project:id,name')
+            ->orderByDesc('rank')
+            ->take(10)
+            ->get();
 
         return [
             'projects' => $projects,
