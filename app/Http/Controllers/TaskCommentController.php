@@ -41,7 +41,7 @@ class TaskCommentController extends Controller
      * @param  \App\Models\TaskComment $comment
      * @return \Illuminate\Http\Response
      */
-    public function show(TaskComment $comment)
+    public function show(Task $task, TaskComment $comment)
     {
         return $comment;
     }
@@ -64,10 +64,10 @@ class TaskCommentController extends Controller
      * @param  \App\Models\TaskComment $comment
      * @return \Illuminate\Http\Response
      */
-    public function destroy(TaskComment $comment)
+    public function destroy(Task $task, TaskComment $comment)
     {
         $comment->delete();
 
-        return response()->status(204);
+        return response()->noContent();
     }
 }

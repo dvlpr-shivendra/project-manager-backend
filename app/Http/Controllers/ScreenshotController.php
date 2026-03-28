@@ -29,7 +29,7 @@ class ScreenshotController extends Controller
     {
         $request->validate([
             'task_id' => 'required|exists:tasks,id',
-            'screenshot' => 'required', Rule::dimensions()->maxWidth(1920)->maxHeight(1080),
+            'screenshot' => ['required', Rule::dimensions()->maxWidth(1920)->maxHeight(1080)],
         ]);
 
         $screenshotPath = $request->file('screenshot')->store('screenshots');

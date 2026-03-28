@@ -10,7 +10,7 @@ class Screenshot extends Model
     use HasFactory;
 
     protected $fillable = [
-        'task_id',
+        'progress_id',
         'path',
     ];
 }
