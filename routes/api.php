@@ -13,6 +13,7 @@ use App\Http\Controllers\ProgressController;
 use App\Http\Controllers\ScreenshotController;
 use App\Http\Controllers\TaskCommentController;
 use App\Http\Controllers\LLMController;
+use App\Http\Controllers\MeController;
 use App\Http\Controllers\ChatController;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -74,19 +75,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
-    Route::get('/me', function () {
-
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
-
-        return [
-            'id' => $user->id,
-            'name' => $user->name,
-            'email' => $user->email,
-            'roles' => $user->getRoleNames(),
-            'permissions' => $user->getAllPermissions()->pluck('name'),
-        ];
-    });
+    Route::get('/me', MeController::class);
 
     Route::get('search/{searchQuery}', SearchController::class);
 
