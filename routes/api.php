@@ -13,6 +13,7 @@ use App\Http\Controllers\ProgressController;
 use App\Http\Controllers\ScreenshotController;
 use App\Http\Controllers\TaskCommentController;
 use App\Http\Controllers\LLMController;
+use App\Http\Controllers\ChatController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -127,4 +128,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/generate-description', [LLMController::class, 'generateDescription']);
         Route::post('/generate-title', [LLMController::class, 'generateTitle']);
     });
+
+    // Chat routes
+    Route::post('/chat', [ChatController::class, 'handle']);
 });

@@ -39,7 +39,8 @@ class TaskController extends Controller
     {
         $task = Task::create(array_merge(
             $request->validate([
-                // 'title' => ['required'],
+                'title' => ['nullable', 'string', 'max:255'],
+                'description' => ['nullable', 'string'],
                 'project_id' => 'required|exists:projects,id',
             ]),
             [
