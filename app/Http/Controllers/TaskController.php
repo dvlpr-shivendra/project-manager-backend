@@ -37,17 +37,20 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-        $task = Task::create(array_merge(
-            $request->validate([
-                'title' => ['nullable', 'string', 'max:255'],
-                'description' => ['nullable', 'string'],
-                'project_id' => 'required|exists:projects,id',
-            ]),
-            [
-                'creator_id' => $request->user()->id,
-                'assignee_id' => $request->user()->id,
-            ]
-        ));
+        $data = $request->validate([
+            'title' => ['nullable', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'project_id' => 'required|exists:projects,id',
+            'assignee_id' => 'nullable|exists:users,id',
+        ]);
+
+        $data['creator_id'] = $request->user()->id;
+
+        if (!isset($data['assignee_id'])) {
+            $data['assignee_id'] = $request->user()->id;
+        }
+
+        $task = Task::create($data);
 
         return $task->loadMissing(['assignee', 'tags', 'attachments', 'followers']);
     }
@@ -177,5 +180,4 @@ class TaskController extends Controller
 
         return Storage::download($attachment->path, $attachment->name);
     }
-
 }
