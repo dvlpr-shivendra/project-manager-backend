@@ -21,12 +21,14 @@ class ChatController extends Controller
         // Fetch context to inject into prompt
         $projects = Project::select('id', 'name')->get();
         $users    = User::select('id', 'name')->get();
+        $tags     = \App\Models\Tag::select('id', 'name')->get();
         $me       = Auth::user();
 
         $prompt = $this->buildPrompt(
             message: $request->input('message'),
             projects: $projects,
             users: $users,
+            tags: $tags,
             currentUserId: $me->id,
         );
 
@@ -53,11 +55,13 @@ class ChatController extends Controller
         string $message,
         $projects,
         $users,
+        $tags,
         int $currentUserId,
     ): string {
         $today        = Carbon::now()->toDateTimeString();
         $projectsList = $projects->map(fn($p) => "  - id: {$p->id}, name: \"{$p->name}\"")->implode("\n");
         $usersList    = $users->map(fn($u) => "  - id: {$u->id}, name: \"{$u->name}\"")->implode("\n");
+        $tagsList     = $tags->map(fn($t) => "  - id: {$t->id}, name: \"{$t->name}\"")->implode("\n");
 
 return <<<PROMPT
 You are a project and task management assistant. Extract the user's intent from their message and return ONLY a valid JSON object — no explanation, no markdown, no code fences.
@@ -71,6 +75,9 @@ Available projects:
 Available users:
 {$usersList}
 
+Available tags:
+{$tagsList}
+
 Return this exact JSON structure:
 {
   "action": "create" | "update" | "delete" | "list" | "clarify",
@@ -78,45 +85,40 @@ Return this exact JSON structure:
   "task_id": number | null,
   "project_id": number | null,
   "data": {
-    "title": string | null,       // for tasks
-    "name": string | null,        // for projects
+    "title": string | null,        // tasks
+    "name": string | null,         // projects
     "description": string | null,
-    "assignee_id": number | null, // for tasks
-    "project_id": number | null,  // for tasks
+    "assignee_id": number | null,  // tasks
+    "project_id": number | null,   // tasks
     "deadline": "YYYY-MM-DD HH:MM:SS" | null,
     "time_estimate": number | null,
-    "is_complete": boolean | null
+    "is_complete": boolean | null,
+    "tags": string[] | null,       // for creation - list of tag names
+    "add_tags": string[] | null,    // for updates - tags to add
+    "remove_tags": string[] | null  // for updates - tags to remove
   },
   "filters": {
     "assignee_id": number | null,
     "project_id": number | null,
     "is_complete": boolean | null,
     "deadline_before": "YYYY-MM-DD HH:MM:SS" | null,
-    "search": string | null
+    "search": string | null,
+    "tag": string | null
   },
   "confirmation_message": string,
   "question": string | null
 }
 
 Rules:
-- Default "resource_type" is "task" unless the user explicitly mentions "project" or gives a project name.
-- For "create" (task): title and project_id (data.project_id) are required. If project_id cannot be determined, set action to "clarify".
-- For "create" (project): name is required in data.
-- For "update" and "delete": task_id or project_id must be present depending on resource_type. If not mentioned, set action to "clarify".
-- For "list": populate filters with whatever the user specified, leave others null. Use "search" filter for project listing if they keyword-search projects.
-- For "clarify": set question to what you need to know, leave data empty.
-- data.assignee_id must come from the users list above — never invent one.
-- data.project_id (for tasks) must come from the projects list above — never invent one.
-- If only one project exists, use it automatically for "create" task.
-- Resolve relative dates ("tomorrow", "next Friday", "end of month") against today's date.
-- time_estimate must be in minutes (e.g. "2 hours" → 120).
-- confirmation_message should be a short, friendly human-readable summary of what will happen.
-- Only populate fields relevant to the action — set everything else to null.
+- Default "resource_type" is "task" unless the user explicitly mentions "project".
+- For "create": title and project_id are required.
+- data.tags (create) / data.add_tags (update): Extract tag names. Prefer names from "Available tags" if they match, otherwise use the new names.
+- Resolve relative dates ("tomorrow", "next Friday") against today.
+- confirmation_message: a short, friendly summary of the action.
 
 Title and Description rules:
-- Never include action phrases like "create a task", "add a project", "make a task" in either title, name, or description.
-- Strip action prefixes and use the core subject for title/name.
-- If a message is detailed, generate a concise 3-6 word title/name and use the rest as description.
+- Never include action phrases like "create a task" in title/name.
+- Generate a concise 3-8 word title/name from the core subject.
 
 User message: "{$message}"
 PROMPT;

@@ -42,6 +42,7 @@ class TaskController extends Controller
             'description' => ['nullable', 'string'],
             'project_id' => 'required|exists:projects,id',
             'assignee_id' => 'nullable|exists:users,id',
+            'tags' => 'nullable|array',
         ]);
 
         $data['creator_id'] = $request->user()->id;
@@ -51,6 +52,10 @@ class TaskController extends Controller
         }
 
         $task = Task::create($data);
+
+        if ($request->has('tags')) {
+            $this->syncTags($task, $request->input('tags'));
+        }
 
         return $task->loadMissing(['assignee', 'tags', 'attachments', 'followers']);
     }
@@ -77,7 +82,50 @@ class TaskController extends Controller
     {
         $task->update($request->all());
 
-        return $task;
+        if ($request->has('tags')) {
+            $this->syncTags($task, $request->input('tags'));
+        }
+
+        if ($request->has('add_tags')) {
+            $this->attachTags($task, $request->input('add_tags'));
+        }
+
+        if ($request->has('remove_tags')) {
+            $this->detachTags($task, $request->input('remove_tags'));
+        }
+
+        return $task->loadMissing(['assignee', 'tags', 'attachments', 'followers']);
+    }
+
+    private function resolveTagIds(array $tags): array
+    {
+        $tagIds = [];
+        foreach ($tags as $tagName) {
+            $tag = \App\Models\Tag::firstOrCreate(
+                ['name' => $tagName],
+                [
+                    'color' => '#ffffff',
+                    'background_color' => '#3b82f6' // Default blue
+                ]
+            );
+            $tagIds[] = $tag->id;
+        }
+        return $tagIds;
+    }
+
+    private function syncTags(Task $task, array $tags)
+    {
+        $task->tags()->sync($this->resolveTagIds($tags));
+    }
+
+    private function attachTags(Task $task, array $tags)
+    {
+        $task->tags()->syncWithoutDetaching($this->resolveTagIds($tags));
+    }
+
+    private function detachTags(Task $task, array $tags)
+    {
+        $task->tags()->detach($this->resolveTagIds($tags));
     }
 
     /**
