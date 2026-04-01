@@ -17,9 +17,19 @@ class ProjectController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Project::withCount(['tasks', 'completedTasks'])->paginate(20);
+        $query = Project::query()->withCount(['tasks', 'completedTasks']);
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        return $query->paginate(20);
     }
 
     /**

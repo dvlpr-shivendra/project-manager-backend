@@ -60,7 +60,7 @@ class ChatController extends Controller
         $usersList    = $users->map(fn($u) => "  - id: {$u->id}, name: \"{$u->name}\"")->implode("\n");
 
 return <<<PROMPT
-You are a task management assistant. Extract the user's intent from their message and return ONLY a valid JSON object — no explanation, no markdown, no code fences.
+You are a project and task management assistant. Extract the user's intent from their message and return ONLY a valid JSON object — no explanation, no markdown, no code fences.
 
 Today is: {$today}
 Current user id (creator): {$currentUserId}
@@ -68,18 +68,21 @@ Current user id (creator): {$currentUserId}
 Available projects:
 {$projectsList}
 
-Available users (for assignment):
+Available users:
 {$usersList}
 
 Return this exact JSON structure:
 {
   "action": "create" | "update" | "delete" | "list" | "clarify",
+  "resource_type": "task" | "project",
   "task_id": number | null,
+  "project_id": number | null,
   "data": {
-    "title": string | null,
+    "title": string | null,       // for tasks
+    "name": string | null,        // for projects
     "description": string | null,
-    "assignee_id": number | null,
-    "project_id": number | null,
+    "assignee_id": number | null, // for tasks
+    "project_id": number | null,  // for tasks
     "deadline": "YYYY-MM-DD HH:MM:SS" | null,
     "time_estimate": number | null,
     "is_complete": boolean | null
@@ -88,31 +91,32 @@ Return this exact JSON structure:
     "assignee_id": number | null,
     "project_id": number | null,
     "is_complete": boolean | null,
-    "deadline_before": "YYYY-MM-DD HH:MM:SS" | null
+    "deadline_before": "YYYY-MM-DD HH:MM:SS" | null,
+    "search": string | null
   },
   "confirmation_message": string,
   "question": string | null
 }
 
 Rules:
-- For "create": title and project_id are required. If project_id cannot be determined, set action to "clarify".
-- For "update" and "delete": task_id must be present. If not mentioned, set action to "clarify".
-- For "list": populate filters with whatever the user specified, leave others null.
+- Default "resource_type" is "task" unless the user explicitly mentions "project" or gives a project name.
+- For "create" (task): title and project_id (data.project_id) are required. If project_id cannot be determined, set action to "clarify".
+- For "create" (project): name is required in data.
+- For "update" and "delete": task_id or project_id must be present depending on resource_type. If not mentioned, set action to "clarify".
+- For "list": populate filters with whatever the user specified, leave others null. Use "search" filter for project listing if they keyword-search projects.
 - For "clarify": set question to what you need to know, leave data empty.
-- assignee_id must come from the users list above — never invent one.
-- project_id must come from the projects list above — never invent one.
-- If only one project exists, use it automatically for "create".
+- data.assignee_id must come from the users list above — never invent one.
+- data.project_id (for tasks) must come from the projects list above — never invent one.
+- If only one project exists, use it automatically for "create" task.
 - Resolve relative dates ("tomorrow", "next Friday", "end of month") against today's date.
 - time_estimate must be in minutes (e.g. "2 hours" → 120).
 - confirmation_message should be a short, friendly human-readable summary of what will happen.
 - Only populate fields relevant to the action — set everything else to null.
 
-Title and description rules:
-- Never include action phrases like "create a task", "add a task", "make a task" in either title or description.
-- Short message (e.g. "Create a task to call John") → strip the action prefix, use the core intent as title (e.g. "Call John"), description null.
-- Detailed message (e.g. "Create a task to integrate Stripe, handle webhooks and failed payment emails...") → strip the action prefix, generate a concise 3-6 word title from the core subject (e.g. "Integrate Stripe Payment Flow"), use the remaining detail as description.
-- If the user explicitly provides "title: X" and/or "description: Y" → use exactly as provided, do not modify.
-- Description should only contain the actual task detail — never the action intent ("create", "add", "make") that triggered the request.
+Title and Description rules:
+- Never include action phrases like "create a task", "add a project", "make a task" in either title, name, or description.
+- Strip action prefixes and use the core subject for title/name.
+- If a message is detailed, generate a concise 3-6 word title/name and use the rest as description.
 
 User message: "{$message}"
 PROMPT;
