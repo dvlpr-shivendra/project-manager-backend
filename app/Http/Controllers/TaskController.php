@@ -15,18 +15,31 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $tasks = Task::where('project_id', request()->project_id)
-            ->orderByDesc('updated_at');
+        $tasks = Task::query();
 
-        if (request()->tag) {
+        if (request()->has('project_id')) {
+            $tasks->where('project_id', request()->project_id);
+        } else {
+            // Global search: only tasks the user is involved in
+            $tasks->where(function($q) {
+                $q->where('creator_id', auth()->id())
+                  ->orWhere('assignee_id', auth()->id());
+            });
+        }
+
+        if (request()->has('is_complete')) {
+            $tasks->where('is_complete', request()->is_complete);
+        }
+
+        if (request()->has('tag')) {
             $tasks->whereRelation('tags', 'tags.name', 'ILIKE', '%' . request()->tag . '%');
         }
 
-        if (request()->assignee) {
+        if (request()->has('assignee')) {
             $tasks->whereRelation('assignee', 'users.name', 'ILIKE', '%' . request()->assignee . '%');
         }
 
-        return $tasks->paginate(100);
+        return $tasks->orderByDesc('updated_at')->paginate(100);
     }
 
     /**
