@@ -22,7 +22,14 @@ class MeController extends Controller
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
-            'roles' => $user->getRoleNames(),
+            'roles' => $user->roles()->with('permissions')->get()->map(function($role) {
+                return [
+                    'id' => $role->id,
+                    'name' => $role->name,
+                    'permissions' => $role->permissions,
+                    'permissionNames' => $role->permissions->pluck('name'),
+                ];
+            }),
             'permissions' => $user->getAllPermissions()->pluck('name'),
             'stats' => [
                 'projects_count' => Project::count(),

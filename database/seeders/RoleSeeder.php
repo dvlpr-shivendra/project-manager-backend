@@ -14,21 +14,29 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'sanctum']);
-        Role::firstOrCreate(['name' => 'user', 'guard_name' => 'sanctum']);
+        $adminRole = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'sanctum']);
+        $userRole = Role::firstOrCreate(['name' => 'user', 'guard_name' => 'sanctum']);
 
-        User::first()->assignRole(['name' => 'admin']);
+        if (User::count() > 0) {
+            User::first()->assignRole($adminRole);
+        }
 
         $entities = ['project', 'task'];
         $commonActions = ['create', 'update', 'delete'];
 
+        $allPermissionNames = [];
         foreach ($entities as $entity) {
             foreach ($commonActions as $action) {
+                $permissionName = $action . '-' . $entity;
                 Permission::firstOrCreate([
-                    'name' => $action . '-' . $entity,
+                    'name' => $permissionName,
                     'guard_name' => 'sanctum',
                 ]);
+                $allPermissionNames[] = $permissionName;
             }
         }
+
+        $adminRole->syncPermissions($allPermissionNames);
+        $userRole->syncPermissions(['create-project', 'update-project', 'create-task', 'update-task']);
     }
 }
