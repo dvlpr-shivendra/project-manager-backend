@@ -21,7 +21,7 @@ class RoleSeeder extends Seeder
             User::first()->assignRole($adminRole);
         }
 
-        $entities = ['project', 'task'];
+        $entities = ['project', 'task', 'user', 'role'];
         $commonActions = ['create', 'update', 'delete'];
 
         $allPermissionNames = [];
@@ -37,6 +37,6 @@ class RoleSeeder extends Seeder
         }
 
         $adminRole->syncPermissions($allPermissionNames);
-        $userRole->syncPermissions(['create-project', 'update-project', 'create-task', 'update-task']);
+        $userRole->syncPermissions(['create-task', 'update-task']);
     }
 }
